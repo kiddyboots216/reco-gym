@@ -11,6 +11,7 @@
 from numpy import array, diag, exp, matmul, mod
 from scipy.special import expit as sigmoid
 from .abstract import AbstractEnv, env_args, organic
+from .reco_env_v1 import RecoEnv1
 
 # Default arguments for toy environment ------------------------------------
 
@@ -41,7 +42,7 @@ class PandaEnv0(RecoEnv1):
     def __init__(self):
         super().__init__()
 
-    @override
+    # @override
     def step(self, action_id):
         """
         Parameters
