@@ -73,8 +73,9 @@ class PandaEnv0(RecoEnv1):
         info = {}
         # assume we are in Amazon, if not this will get updated
         rew = 0
+        assert self.state in (bandit, organic, stop)
         if self.state == bandit:
-            print("We're on FB")
+            # print("We're on FB")
             # show an ad and see whether user clicks it
             rew = self.draw_click(action_id)
             if rew == 1:
@@ -89,7 +90,7 @@ class PandaEnv0(RecoEnv1):
                 obs = np.array((self.current_time, self.current_user_id, 0))
                 return obs, rew, done, info
         if self.state == organic:
-            print("We're on Amazon")
+            # print("We're on Amazon")
             # look at a new product
             self.update_product_view()
             # user might close browser, go to FB or continue shopping
@@ -98,32 +99,7 @@ class PandaEnv0(RecoEnv1):
             obs = np.array((self.current_time, self.current_user_id, self.product_view))
             done = True if self.state == stop else False
             return obs, rew, done, info
-
-if __name__ == "__main__":
-    env = PandaEnv0()
-    env_1_args = {
-        **env_args,
-        **{
-            'K': 5,
-            'sigma_omega_initial': 1,
-            'sigma_omega': 0.1,
-            'number_of_flips': 0,
-            'sigma_mu_organic': 3,
-            'change_omega_for_bandits': False,
-        }
-    }
-    env_1_args['random_seed'] = 42
-
-    # Initialize the gym for the first time by calling .make() and .init_gym()
-    env = gym.make('panda-gym-v0')
-    env.init_gym(env_1_args)
-    env.reset()
-    observation, reward, done = None, 0, False
-    i = 0
-    while not done:
-        action = np.random.randint(10)
-    #     from IPython.core.debugger import set_trace; set_trace()
-        print(f"State: {env.state}")
-        observation, reward, done, info = env.step(action)
-        print(f"Step: {i} - Action: {action} - Observation: {observation} - Reward: {reward} - Done: {done}")
-        i += 1
+        if self.state == stop:
+            obs = np.array((self.current_time, self.current_time, 0))
+            done = True
+            return obs, rew, done, info
