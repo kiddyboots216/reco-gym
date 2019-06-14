@@ -1,5 +1,6 @@
 from .reco_env_v0 import RecoEnv0
 from .reco_env_v1 import RecoEnv1
+from .panda_env_v0 import PandaEnv0
 
 from .observation import Observation
 from .configuration import Configuration

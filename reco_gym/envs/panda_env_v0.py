@@ -35,10 +35,12 @@ def ff(xx, aa = 5, bb = 2, cc = 0.3, dd = 2, ee = 6):
 
 
 # Environment definition.
+# Amazon = Organic
+# Facebook = Bandit
 class PandaEnv0(RecoEnv1):
     def __init__(self):
         super().__init__()
-        
+
     @override
     def step(self, action_id):
         """
@@ -67,12 +69,12 @@ class PandaEnv0(RecoEnv1):
         info = {}
         # assume we are in Amazon, if not this will get updated
         rew = 0
-        if self.state == 'Facebook':
+        if self.state == bandit:
             # show an ad and see whether user clicks it
             rew = self.draw_click(action_id)
             if rew == 1:
                 # user clicked the ad, proceed to Amazon
-                self.state = 'Amazon'
+                self.state = organic
                 # self.generate_amazon_session()
             elif rew == -1:
                 # user didn't click ad but can still change state
@@ -81,7 +83,7 @@ class PandaEnv0(RecoEnv1):
                 # product-id on FB is 0
                 obs = (self.current_time, self.current_user_id, 0)
                 return obs, rew, done, info
-        if self.state == 'Amazon':
+        if self.state == organic:
             # look at a new product
             self.update_product_view()
             # user might close browser, go to FB or continue shopping
