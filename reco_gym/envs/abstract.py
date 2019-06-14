@@ -6,7 +6,7 @@ import numpy as np
 
 from numpy.random.mtrand import RandomState
 from scipy.special import expit as sigmoid
-from gym.spaces import Discrete, Tuple
+from gym.spaces import Discrete, Dict, Box
 
 from .session import OrganicSessions
 from .context import DefaultContext
@@ -18,6 +18,7 @@ from .features.time import DefaultTimeGenerator
 # Arguments shared between all environments.
 
 env_args = {
+    'max_time': 789,
     'num_products': 10,
     'num_users': 100,
     'random_seed': np.random.randint(2 ** 31 - 1),
@@ -67,8 +68,14 @@ class AbstractEnv(gym.Env, ABC):
         self.action_space = Discrete(self.config.num_products)
 
         # Defining Observation Space
-        self.observation_space = 
-
+        self.observation_space = Box(
+            low = np.array([0, 0, 0]),
+            high = np.array([self.config.max_time,
+                            self.config.num_users,
+                            self.config.num_products]),
+            shape = (3, 1),
+            dtype = np.int32,
+            )
         if 'time_generator' not in args:
             self.time_generator = DefaultTimeGenerator(self.config)
         else:
@@ -120,6 +127,26 @@ class AbstractEnv(gym.Env, ABC):
             self.update_state()
 
         return session
+
+    # def generate_amazon_session(self):
+        # Init Amazon sess
+        # self.session = AmazonSession()
+        # self.state = 'Amazon'
+
+    def step_amazon_session(self):
+        self.update_product_view()
+        self.update_state()
+        obs = (self.current_time, self.current_user_id, self.product_view)
+        done = True if self.state == stop else False
+        return obs, done
+        # while self.state == organic:
+        #     self.update_product_view()
+        #     session.next(
+        #         DefaultContext(self.current_time, self.current_user_id),
+        #         self.product_view
+        #         )
+        #     self.update_state()
+        # return session
 
     def step(self, action_id):
         """
