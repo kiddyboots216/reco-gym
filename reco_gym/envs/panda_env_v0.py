@@ -33,7 +33,10 @@ env_1_args = {
 def ff(xx, aa = 5, bb = 2, cc = 0.3, dd = 2, ee = 6):
     # Magic numbers give a reasonable ctr of around 2%.
     return sigmoid(aa * sigmoid(bb * sigmoid(cc * xx) - dd) - ee)
-
+# Magic numbers for Markov states.
+organic = 0
+bandit = 1
+stop = 2
 
 # Environment definition.
 # Amazon = Organic
