@@ -64,6 +64,7 @@ stop = 2
 class PandaEnv0(gym.Env):
     def __init__(self):
         gym.Env.__init__(self)
+        self.state = organic
 
     def init_gym(self, args):
         self.config = Configuration(args)
@@ -124,41 +125,42 @@ class PandaEnv0(gym.Env):
                 always an empty dict
 
         """
-        info = {}
-        # assume we are in Amazon, if not this will get updated
-        rew = 0
         assert self.state in (bandit, organic, stop)
-        if self.state == bandit:
-            # print("We're on FB")
-            # show an ad and see whether user clicks it
-            rew = self.draw_click(action_id)
-            if rew == 1:
-                # user clicked the ad, proceed to Amazon
-                self.state = organic
-            else:
-                rew = -1
-                # user didn't click ad but can still change state
-                self.update_state()
-                done = True if self.state == stop else False
-                # product-id on FB is 0
-                obs = np.array((self.current_time, self.current_user_id, 0))
-                return obs, rew, done, info
         if self.state == organic:
-            # print("We're on Amazon")
-            # look at a new product
-            self.update_product_view()
-            # user might close browser, go to FB or continue shopping
-            self.update_state()
-            # product-id on Amazon is in (1, num_products)
-            obs = np.array((self.current_time, self.current_user_id, self.product_view))
-            done = True if self.state == stop else False
-            return obs, rew, done, info
-        # if self.state == stop:
+            return self.step_organic()
+        if self.state == bandit:
+            return self.step_bandit(action_id)
+        return self.step_stop()
+
+    def step_organic(self):
+        # look at a new product
+        self.update_product_view()
+        # user might close browser, go to FB or continue shopping
+        self.update_state()
+        # product-id on Amazon is in (1, num_products)
+        obs = np.array((self.current_time, self.current_user_id, self.product_view))
+        return obs, 0, True if self.state == stop else False, {}
+
+    def step_bandit(self, action_id):
+        rew = self.draw_click(action_id)
+        if rew == 1:
+            return self.step_successful_click()
+        return self.step_unsuccessful_click()
+
+    def step_successful_click(self):
+        obs, _, _, _ = self.step_organic()
+        return obs, 1, True if self.state == stop else False, {}
+
+    def step_unsuccessful_click(self):
+        # user didn't click ad but can still change state
+        self.update_state()
+        # product-id on FB is 0
+        obs = np.array((self.current_time, self.current_user_id, 0))
+        return obs, -1, True if self.state == stop else False, {}
+
+    def step_stop(self):
         obs = np.array((self.current_time, self.current_time, 0))
-        done = True
-        return obs, rew, done, info
-        # else:
-        #     return np.array
+        return obs, 0, True, {}
 
     def set_static_params(self):
         # Initialise the state transition matrix which is 3 by 3
