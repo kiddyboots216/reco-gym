@@ -9,3 +9,4 @@ from .session import Session
 
 from .reco_env_v0 import env_0_args
 from .reco_env_v1 import env_1_args
+from .panda_env_v0 import panda_env_args
