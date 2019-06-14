@@ -73,7 +73,6 @@ class AbstractEnv(gym.Env, ABC):
             high = np.array([self.config.max_time,
                             self.config.num_users,
                             self.config.num_products]),
-            shape = (3, 1),
             dtype = np.int32,
             )
         if 'time_generator' not in args:
