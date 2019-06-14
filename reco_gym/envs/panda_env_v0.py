@@ -100,8 +100,7 @@ class PandaEnv0(gym.Env):
         self.reset_random_seed()
         self.reset()
 
-    # @override
-    def step(self, action_id):
+    def step(self, action):
         """
         Parameters
         ----------
@@ -129,8 +128,9 @@ class PandaEnv0(gym.Env):
         if self.state == organic:
             return self.step_organic()
         if self.state == bandit:
-            return self.step_bandit(action_id)
-        return self.step_stop()
+            return self.step_bandit(action)
+        if self.state == stop:
+            return self.step_stop()
 
     def step_organic(self):
         # look at a new product
@@ -210,6 +210,8 @@ class PandaEnv0(gym.Env):
         self.omega = self.rng.normal(
             0, self.config.sigma_omega_initial, size = (self.config.K, 1)
         )
+        self.update_product_view()
+        return [self.current_time, self.current_user_id, self.product_view]
 
     # Update user state to one of (organic, bandit, leave) and their omega (latent factor).
     def update_state(self):
