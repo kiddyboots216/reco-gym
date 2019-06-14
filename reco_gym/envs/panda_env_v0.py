@@ -47,6 +47,12 @@ env_1_args = {
         'change_omega_for_bandits': False,
     }
 }
+panda_env_args = {
+    **env_1_args,
+    **{
+        'penalty': False,
+    }
+}
 
 
 # Maps behaviour into ctr - organic has real support ctr is on [0,1].
@@ -156,7 +162,7 @@ class PandaEnv0(gym.Env):
         self.update_state()
         # product-id on FB is 0
         obs = np.array((self.current_time, self.current_user_id, 0))
-        return obs, -1, True if self.state == stop else False, {}
+        return obs, -1 if self.config.penalty else 0, True if self.state == stop else False, {}
 
     def step_stop(self):
         obs = np.array((self.current_time, self.current_time, 0))
