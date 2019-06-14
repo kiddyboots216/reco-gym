@@ -7,7 +7,7 @@
 
 # Beta is the latent representation of response to actions (matrix P by K)
 # sigmoid(beta omega) is the ctr for each action
-
+import numpy as np
 from numpy import array, diag, exp, matmul, mod
 from scipy.special import expit as sigmoid
 from .abstract import AbstractEnv, env_args, organic
