@@ -82,7 +82,7 @@ class PandaEnv0(RecoEnv1):
                 self.update_state()
                 done = True if self.state == stop else False
                 # product-id on FB is 0
-                obs = (self.current_time, self.current_user_id, 0)
+                obs = np.array(self.current_time, self.current_user_id, 0)
                 return obs, rew, done, info
         if self.state == organic:
             # look at a new product
@@ -90,6 +90,6 @@ class PandaEnv0(RecoEnv1):
             # user might close browser, go to FB or continue shopping
             self.update_state()
             # product-id on Amazon is in (1, num_products)
-            obs = (self.current_time, self.current_user_id, self.product_view)
+            obs = np.array(self.current_time, self.current_user_id, self.product_view)
             done = True if self.state == stop else False
             return obs, rew, done, info
