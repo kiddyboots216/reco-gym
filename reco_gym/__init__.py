@@ -37,3 +37,8 @@ register(
     id = 'reco-gym-v1',
     entry_point = 'reco_gym.envs:RecoEnv1'
 )
+
+register(
+    id = 'panda-gym-v0',
+    entry_point = 'reco_gym.envs:PandaEnv0'
+)

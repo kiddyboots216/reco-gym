@@ -6,7 +6,7 @@ import numpy as np
 
 from numpy.random.mtrand import RandomState
 from scipy.special import expit as sigmoid
-from gym.spaces import Discrete
+from gym.spaces import Discrete, Tuple
 
 from .session import OrganicSessions
 from .context import DefaultContext
@@ -65,6 +65,9 @@ class AbstractEnv(gym.Env, ABC):
 
         # Defining Action Space.
         self.action_space = Discrete(self.config.num_products)
+
+        # Defining Observation Space
+        self.observation_space = 
 
         if 'time_generator' not in args:
             self.time_generator = DefaultTimeGenerator(self.config)
